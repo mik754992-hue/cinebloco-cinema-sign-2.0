@@ -1,0 +1,26 @@
+name: Build
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+      - name: Unzip project
+        run: unzip -q cinema-sign.zip -d work
+      - name: Build
+        run: gradle build -p work/cinema-sign
+      - name: Show jar contents
+        run: unzip -l work/cinema-sign/build/libs/cinemasign-1.0.0.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinemasign-jar
+          path: work/cinema-sign/build/libs/cinemasign-1.0.0.jar
